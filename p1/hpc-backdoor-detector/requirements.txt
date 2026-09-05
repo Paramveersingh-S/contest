@@ -1,0 +1,8 @@
+﻿python>=3.10
+scikit-learn
+torch
+pandas
+numpy
+matplotlib
+seaborn
+joblib

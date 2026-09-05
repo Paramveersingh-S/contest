@@ -1,0 +1,4 @@
+﻿data/*
+!data/sample.csv
+models/*
+!models/.keep
