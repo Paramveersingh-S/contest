@@ -9,42 +9,89 @@
 Welcome to our submission for the **IIT Kharagpur Hackathon 2026**. 
 This repository contains our implementations for the online phase problems.
 
+---
+
 ## 🎯 Problem 1: Detection of Backdoor Attacks using Hardware Performance Counters (HPCs)
 
-Our flagship solution addresses the unsupervised anomaly detection of backdoor attacks based on microarchitectural data-flow dynamics using HPCs.
+Our flagship solution addresses the unsupervised anomaly detection of backdoor attacks based on microarchitectural data-flow dynamics using Hardware Performance Counters (HPCs).
 
-### Architecture
-We employ a robust ensemble methodology combining multiple model families to capture different aspects of anomaly representation:
+### 🏛️ Architecture
 
-- **Autoencoder**: For complex nonlinear structure and multi-feature co-shifts.
-- **Gaussian Mixture Model (GMM)**: For global distributional shift evaluation.
-- **Isolation Forest**: To identify sparse/rare local outliers.
-- **One-Class SVM**: For establishing tight nonlinear boundaries around the normal manifold.
-- **Local Outlier Factor (LOF)**: For localized density anomalies.
+Because no backdoor traces were provided in the initial dataset, our pipeline utilizes a **principled Synthetic Anomaly Generator** combined with a robust **Multi-Model Meta-Ensemble**. 
 
-These scores are normalized and passed through a meta-ensemble (e.g., Logistic Stacker) for high-confidence predictions, calibrated against a principled **Synthetic Anomaly Validation Set** constructed due to the absence of backdoored traces during training.
+```mermaid
+flowchart TD
+    A[Raw HPC CSV: Clean Traces] --> B[Data Cleaning & Splitting]
+    B --> L[Synthetic Anomaly Generator]
+    B --> C[Feature Engineering <br/> Z-score, PCA, Ratios]
+    L --> C
+    C --> D1[Autoencoder]
+    C --> D2[GMM / Mahalanobis]
+    C --> D3[Isolation Forest]
+    C --> D4[One-Class SVM]
+    C --> D5[Local Outlier Factor]
+    D1 --> E[Per-model Anomaly Scores]
+    D2 --> E
+    D3 --> E
+    D4 --> E
+    D5 --> E
+    E --> F[Logistic Stacker Meta-Ensemble]
+    F --> H[F1-Optimized Threshold Calibration]
+    H --> I[Final Detector: Label & Probs]
+```
 
-### 🏛 Repository Structure
+### 📊 Performance & Results
+
+We tested each individual model against our proxy synthetic validation set. The **Meta-Ensemble** provides the most robust and secure boundary by leveraging both global structure (GMM/AE) and local sparsity (LOF/IForest).
+
+#### Ablation Study (AUROC)
+
+| Model | AUROC Score |
+|-------|-------------|
+| **Autoencoder** | 0.8198 |
+| **Gaussian Mixture Model (GMM)** | 0.8114 |
+| **Isolation Forest** | 0.8007 |
+| **One-Class SVM** | 0.8052 |
+| **Local Outlier Factor (LOF)** | 0.8355 |
+| **Meta-Ensemble (Logistic Fusion)** | **0.8320** |
+
+#### Final Evaluation Metrics (at optimal threshold 0.3812):
+- **F1 Score**: `0.7959`
+- **True Positive Rate (TPR)**: `0.7312`
+- **False Positive Rate (FPR)**: `0.1062`
+- **Accuracy**: `0.8125`
+
+<p align="center">
+  <img src="p1/hpc-backdoor-detector/report/roc_curve.png" alt="ROC Curve" width="600"/>
+  <br/>
+  <em>Figure 1: Receiver Operating Characteristic (ROC) curve of our final Meta-Ensemble showing the best F1-optimized threshold.</em>
+</p>
+
+### 📁 Repository Structure
 - `p1/hpc-backdoor-detector/`: Contains all code for Problem 1.
-  - `src/`: Data cleaning, feature engineering, modeling, and evaluation code.
-  - `notebooks/`: Exploratory Data Analysis (EDA) and experimental notebooks.
-  - `models/`: Serialized pre-trained artifacts.
-  - `data/`: Datasets (CSV files).
-  - `report/`: The final solution report.
+  - `src/`: Data cleaning, feature engineering, synthetic anomaly generator, modeling, and evaluation code.
+  - `notebooks/`: Exploratory Data Analysis (EDA) generated notebook.
+  - `models/`: Serialized pre-trained artifacts (Scalers, PCA, PyTorch weights, and Sklearn models).
+  - `data/`: Datasets.
+  - `report/`: The final solution report and generated plots.
 
 ### 🚀 Instructions for Judges
 
-To test and run the solution for Problem 1, you can use our easy-to-use runner script:
+To test and run the solution for Problem 1, you can use our easy-to-use runner scripts. 
 
+**1. End-to-End Pipeline Reproduction**
+This command will train all models, generate the synthetic validation data, tune the thresholds, and generate evaluation metrics from scratch:
 ```bash
 cd p1/hpc-backdoor-detector
 pip install -r requirements.txt
-./run_pipeline.sh
+python train_pipeline.py
 ```
 
-To run inference on a new trace file, you can utilize the `infer.py` entry point:
+**2. Evaluate a New Private Dataset**
+To run inference on a new trace file for grading, you can utilize the `infer.py` entry point. It outputs a CSV containing the `trace_id`, `anomaly_score`, and the predicted `label`:
 ```bash
-python src/infer.py --csv_path <path_to_new_trace_csv>
+cd p1/hpc-backdoor-detector
+python src/infer.py --csv_path <path_to_new_trace_csv> --output predictions.csv
 ```
 
 ---
