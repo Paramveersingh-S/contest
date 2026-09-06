@@ -14,6 +14,8 @@
 
 \maketitle
 
+
+
 \section{Problem Framing}
 This project tackles the challenge of identifying backdoor attacks in neural networks by analyzing Hardware Performance Counters (HPCs) during inference. Given only clean traces, the problem is formulated as an unsupervised anomaly detection task. We aim to detect microarchitectural data-flow dynamics shifts indicative of backdoor triggers.
 
@@ -77,6 +79,13 @@ Local Outlier Factor (LOF) & 0.8355 \\
 \end{tabular}
 \end{center}
 \vspace{0.5cm}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\textwidth]{../../../results/P1.png}
+\caption{Receiver Operating Characteristic (ROC) curve for the Meta-Ensemble.}
+\label{fig:roc}
+\end{figure}
 
 While some local models (e.g., LOF) occasionally spike higher on specific synthetic anomalies, the \textbf{Meta-Ensemble} provides a much more robust boundary by leveraging both global structure (GMM/AE) and local sparsity (LOF/IForest). The ensemble yields an excellent overall \textbf{F1-score of 0.7959}, achieving a True Positive Rate (TPR) of \textbf{0.73} while restricting False Positives (FPR) to just \textbf{0.10} on the validation set.
 

@@ -63,7 +63,7 @@ We tested each individual model against our proxy synthetic validation set. The 
 - **Accuracy**: `0.8125`
 
 <p align="center">
-  <img src="results/roc_curve.png" alt="ROC Curve" width="600"/>
+  <img src="results/P1.png" alt="ROC Curve" width="600"/>
   <br/>
   <em>Figure 1: Receiver Operating Characteristic (ROC) curve of our final Meta-Ensemble showing the best F1-optimized threshold.</em>
 </p>
@@ -112,7 +112,7 @@ We utilized the **HopSkipJumpAttack** (a decision-based attack) to estimate the 
 | **Average $L_2$ Distortion** | **1.0218** |
 
 <p align="center">
-  <img src="results/clean_vs_adv.png" alt="Clean vs Adversarial" width="600"/>
+  <img src="results/P2.png" alt="Clean vs Adversarial" width="600"/>
   <br/>
   <em>Figure 2: Comparison of Clean images (left) vs generated Adversarial images (right) showing virtually indistinguishable L2 distortion of 1.0218.</em>
 </p>
