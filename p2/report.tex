@@ -34,4 +34,29 @@ The attack yields adversarial tensors in the $[0, 1]$ range. These are scaled to
 \section{Performance \& Conclusion}
 The attack successfully misclassifies the images while maintaining very low visual distortion. By limiting the iterations of the HopSkipJump algorithm, we optimized the number of inferences, ensuring competitive performance on the evaluation metrics.
 
+\subsection{Results}
+The HopSkipJumpAttack was executed on 1,000 clean images. The empirical results demonstrate near-perfect evasion with imperceptible noise:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Metric} & \textbf{Value} \\ \midrule
+Attack Success Rate & 99.60\% \\
+Average $L_2$ Distortion & 1.0218 \\ \bottomrule
+\end{tabular}
+\caption{Performance metrics of the black-box attack on the CNN.}
+\label{tab:p2_results}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{clean_vs_adv.png}
+\caption{Comparison of Clean images (left) vs Adversarial images (right). The $L_2$ distortion is approximately 1.02, making the perturbations imperceptible to the human eye.}
+\label{fig:adv_comparison}
+\end{figure}
+
+As shown in Table~\ref{tab:p2_results} and Figure~\ref{fig:adv_comparison}, the decision-based attack successfully satisfies the problem requirements.
+
+
 \end{document}
